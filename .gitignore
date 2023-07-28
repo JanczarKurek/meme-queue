@@ -130,3 +130,6 @@ dmypy.json
 
 # Bazel stuff
 bazel-*
+
+# IDE stuff
+.idea/

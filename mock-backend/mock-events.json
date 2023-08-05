@@ -1,0 +1,22 @@
+[
+    {
+        "url" : "http://internet.www/memy.www/182664184_811848266409109_5019385348175520465_n.jpg",
+        "type": "meme"
+    },
+    {
+        "url" : "http://internet.www/memy.www/%F0%9F%8D%86.jpg",
+        "type": "meme"
+    },
+    {
+        "url" : "raccoon.jpg",
+        "type": "meme"
+    },
+    {
+        "type" : "cheeseStatus",
+        "status" : "NIE MA SERA!!!11!!"
+    },
+    {
+        "type" : "news",
+        "message" : "Wszystko jest do dupy"
+    }
+]

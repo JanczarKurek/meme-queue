@@ -1,14 +1,26 @@
 [
     {
-        "url" : "http://internet.www/memy.www/182664184_811848266409109_5019385348175520465_n.jpg",
+        "type" : "cheeseStatus",
+        "status" : "Jest ser 🧀"
+    },
+    {
+        "url" : "http://localhost:5000/media/images/cat.jpg",
         "type": "meme"
     },
     {
-        "url" : "http://internet.www/memy.www/%F0%9F%8D%86.jpg",
+        "url" : "http://localhost:5000/media/images/aubergines.jpg",
         "type": "meme"
     },
     {
-        "url" : "raccoon.jpg",
+        "type" : "news",
+        "message" : "Gdzie się podziały szopy???"
+    },
+    {
+        "url" : "http://localhost:5000/media/images/raccoon.jpg",
+        "type": "meme"
+    },
+    {
+        "url" : "https://picsum.photos/500/500",
         "type": "meme"
     },
     {

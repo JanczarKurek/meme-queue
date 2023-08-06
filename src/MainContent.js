@@ -1,27 +1,33 @@
 import React from 'react';
-
+import Spinner from "./Spinner"
 class MainContent extends React.Component {
 
   constructor(props) {
       super(props);
       this.state = {
-        imgUrl: "raccoon.jpg"
+        imgUrl: null
       };
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.event === this.props.event)
+    if (prevProps.events === this.props.events || !this.props.events)
       return;
 
-    if (this.props.event && this.props.event.type === "meme") {
-      this.setState({imgUrl: this.props.event.url})
-    }
+    for (let event of this.props.events)
+      if (event.type === "meme")
+        this.setState({imgUrl: event.url})
+    
   }
 
   render() {
+    
+    let content = Spinner()
+    if (this.state.imgUrl !== null)
+        content = (<img src={this.state.imgUrl} alt={this.state.imgUrl} />)
+
     return (
       <div className="MainContent">
-        <img src={this.state.imgUrl} className="App-logo" alt="logo" />
+        {content}
       </div>
     )
   }

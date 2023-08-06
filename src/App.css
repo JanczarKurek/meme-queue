@@ -35,6 +35,10 @@
   flex-grow: 1;
 }
 
+.MainContent img {
+  border-radius: 10px;
+}
+
 .StatusBar {
   display: flex;
   flex-direction: row;
@@ -65,4 +69,24 @@
 
 .StatusBar> :last-child {
   border: none;
+}
+
+.spinner {
+  animation: spin 2s linear infinite;
+  height: 30px;
+  width: 30px;
+  border: 5px solid #555;
+  border-top: 5px solid #61dafb;
+  border-radius: 50%;
+
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(359deg);
+  }
 }

@@ -19,15 +19,28 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <NewsBar event = {this.state.event} />
-        <MainContent event = {this.state.event} />
-        <StatusBar event = {this.state.event} />
+        <NewsBar events = {this.state.events} />
+        <MainContent events = {this.state.events} />
+        <StatusBar events = {this.state.events} />
       </div>
     );
   }
 
   componentDidMount() {
-      setInterval(() => this.refreshEvents(), 5000)
+      this.getCurrentEvents(this.host + "/queue/v1/currentEvents")
+      setInterval(() => this.refreshEvents(), 10000)
+  }
+
+  getCurrentEvents(url) {
+    fetch(url,
+    {
+      mode: 'cors',
+      headers: {'Content-Type':'application/json'}
+    })
+    .then(async res => {
+      const data = await res.json();
+      this.setState({events : data})
+    }).catch(err => console.log(err))
   }
 
   refreshEvents() {
@@ -38,9 +51,8 @@ class App extends React.Component {
     })
     .then(async res => {
       const data = await res.json();
-      this.setState({event : data[this.state.i % data.length]})
+      this.setState({events : [data[this.state.i % data.length]], i : this.state.i + 1})
     }).catch(err => console.log(err))
-    this.setState({i : this.state.i + 1})
   }
 
 }

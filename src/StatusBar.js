@@ -1,5 +1,5 @@
 import React from "react";
-
+import Spinner from "./Spinner";
 
 function StatusBarItem({text, grow, children}) {
     let style = {
@@ -43,29 +43,25 @@ class Clock extends React.Component {
 
 
 
-
 class StatusBar extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          cheeseStatus: "",
+          events: [],
+          cheeseStatus: null,
           memeFileName: "raccoon.jpg"
         };
     }
 
-  updateEvents(events) {
-    this.setState({memeFileName: events[0].url})
-  }
-  
   componentDidUpdate(prevProps) {
-    if (prevProps.event === this.props.event || !this.props.event)
+    if (prevProps.events === this.props.events || !this.props.events)
       return;
 
-    if (this.props.event.type === "meme") {
-      this.setState({memeFileName: this.props.event.url})
-    } else if (this.props.event.type === "cheeseStatus") {
-      this.setState({cheeseStatus: this.props.event.status})
-    }
+    for (let event of this.props.events)
+      if (event.type === "meme")
+        this.setState({memeFileName: event.url})
+      else if (event.type === "cheeseStatus")
+        this.setState({cheeseStatus: event.status})
   }
 
   render() {

@@ -5,25 +5,29 @@ class NewsBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      message: "Memiarka stała się tymczasowo szopiarką"
+      message: ""
     };
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.event === this.props.event)
+    if (prevProps.events === this.props.events || !this.props.events)
       return;
 
-    if (this.props.event && this.props.event.type === "news") {
-      this.setState({message: this.props.event.message})
-    }
+    for (let event of this.props.events)
+      if (event && event.type === "news")
+        this.setState({message: event.message})
+
   }
 
   render() {
-    return (
-      <div className="NewsBar">
-        <marquee>{this.state.message}</marquee>
-      </div>
-    )
+    if (this.state.message === "")
+      return (<div></div>)
+    else
+      return (
+        <div className="NewsBar">
+          <marquee>{this.state.message}</marquee>
+        </div>
+      )
   }
 }
 

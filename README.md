@@ -9,4 +9,4 @@ To run the frontend, you need to have [Node.js](https://nodejs.org/en/) and
 
 The frontend requires a backend to get events - in this project there is a mock
 backend written in Flask. To run the backend instal `flask` and `flask-cors` and
-run `flask --app mock-backen --run`
+run `flask --app mock-backend --run`

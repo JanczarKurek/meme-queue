@@ -1,8 +1,8 @@
 import abc
 import asyncio
 
-from resource import Resource
-from resource_queue import ResourceQueue
+from resource.resource import Resource
+from resource.resource_queue import ResourceQueue
 
 
 class ResourceProvider(abc.ABC):
@@ -40,7 +40,8 @@ class TimeBasedResourceProvider(ResourceProvider):
 
     async def run(self):
         await self.setup()
-        while await asyncio.sleep(self._interval):
+        while True:
+            await asyncio.sleep(self._interval)
             if next_resource:=await self.next_resource():
                 await self.put_resource(**next_resource)
         await self.teardown()

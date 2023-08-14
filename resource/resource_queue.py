@@ -1,7 +1,7 @@
 import abc
 from collections import deque
 
-from resource import Resource
+from resource.resource import Resource
 
 
 class ResourceQueue(abc.ABC):

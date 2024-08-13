@@ -5,7 +5,7 @@ class MainContent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      imgUrl: null
+      imgUrl: null,
     };
   }
 
@@ -23,7 +23,7 @@ class MainContent extends React.Component {
 
     let content = Spinner()
     if (this.state.imgUrl !== null)
-      content = (<img src={this.state.imgUrl} alt={this.state.imgUrl} />)
+      content = (<img src={this.state.imgUrl} alt={this.state.imgUrl} class="meme-image" />)
 
     return (
       <div className="MainContent">

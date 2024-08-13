@@ -33,7 +33,16 @@
   font-size: calc(10px + 2vmin);
   color: white;
   flex-grow: 1;
+  min-height: 0;
+  padding: 10px;
 }
+
+.meme-image {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+
 
 .MainContent img {
   border-radius: 10px;

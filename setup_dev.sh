@@ -1,8 +1,8 @@
 #!/bin/bash
 
-function script_path () {
-	path="$(realpath "${BASH_SOURCE:-$0}")"
-	echo "$(dirname "$path")"
+function script_path() {
+  path="$(realpath "${BASH_SOURCE:-$0}")"
+  echo "$(dirname "$path")"
 }
 
 venv_dir="$(script_path)/venv"

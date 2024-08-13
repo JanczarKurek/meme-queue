@@ -16,5 +16,5 @@ async def execute_infrastructure(queue: ResourceQueue, providers: Iterable[Resou
 
     runner = web.AppRunner(app)
     await runner.setup()
-    site = web.TCPSite(runner, "localhost", 8080)
+    site = web.TCPSite(runner, "0.0.0.0", 8080)
     await aio.gather(site.start(), *(provider.run() for provider in providers))

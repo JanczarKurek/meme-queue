@@ -4,14 +4,19 @@ from collections import deque
 from resource.resource import Resource
 
 
-class ResourceQueue(abc.ABC):
-    
+class ResourceQueueFront(abc.ABC):
     @abc.abstractmethod
     async def get_some(self) -> list[Resource]:
         """Returns an unspecified amount of Resources"""
 
+class ResourceQueueBack(abc.ABC):
+
     async def put(self, r: Resource):
         """Inserts resource into queue"""
+
+
+class ResourceQueue(ResourceQueueBack, ResourceQueueFront):
+    pass
 
 
 class SimpleResourceQueue(ResourceQueue):

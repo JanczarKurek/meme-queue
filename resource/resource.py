@@ -8,6 +8,7 @@ class Resource:
     resource_tag: str  # Type of resource
     payload: Any  # Additional misc. data
     display_time: float  # When we want to display it.
+    priority: int = 0  # More means more
     creation_time: float = dataclasses.field(default_factory=time.time)
 
     def to_json(self) -> dict[str, Any]:

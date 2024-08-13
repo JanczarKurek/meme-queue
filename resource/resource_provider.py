@@ -2,7 +2,7 @@ import abc
 import asyncio
 
 from resource.resource import Resource
-from resource.resource_queue import ResourceQueue
+from resource.resource_queue import ResourceQueueBack
 
 
 class ResourceProvider(abc.ABC):
@@ -10,7 +10,7 @@ class ResourceProvider(abc.ABC):
 
     RESOURCE_TAG: str = "None"
 
-    def __init__(self, queue: ResourceQueue):
+    def __init__(self, queue: ResourceQueueBack):
         self._queue = queue
 
     async def put_resource(self, **kwargs):
@@ -24,7 +24,7 @@ class ResourceProvider(abc.ABC):
 class TimeBasedResourceProvider(ResourceProvider):
     """Resource provider that puts a resource in a regular manner"""
 
-    def __init__(self, queue: ResourceQueue, interval: float):
+    def __init__(self, queue: ResourceQueueBack, interval: float):
         self._interval = interval
         super().__init__(queue)
     
@@ -44,4 +44,6 @@ class TimeBasedResourceProvider(ResourceProvider):
             await asyncio.sleep(self._interval)
             if next_resource:=await self.next_resource():
                 await self.put_resource(**next_resource)
-        await self.teardown()
+            else:
+                await self.teardown()
+                return

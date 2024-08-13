@@ -9,10 +9,10 @@ Item = TypeVar("Item")
 class CyclicQueue(Generic[Item]):
 
     class ItemStatus(Enum):
-        NEW = 'NEW'
+        NEW = 'NEW'  # Not yet displayed
         NORMAL = 'NORMAL'
-        PENDING = 'PENDING'
-        RETRACTED = 'RETRACTED'
+        PENDING = 'PENDING'  # Pending for review
+        RETRACTED = 'RETRACTED'  # Retracted
         SPECIAL = 'SPECIAL'
 
     BAD_STATUSES = [ItemStatus.PENDING, ItemStatus.RETRACTED]
@@ -23,13 +23,16 @@ class CyclicQueue(Generic[Item]):
         self._pending_request = None
         self._already_returned = []
 
-    def add_item(self, item: Item, status: ItemStatus = ItemStatus.NEW):
+    def add_item(self, item: Item, status: ItemStatus = ItemStatus.NEW) -> bool:
+        """Adds item and returns True if it is not already in a queue"""
         if item not in self._items.keys():
             self._items[item] = status
             if status == self.ItemStatus.NEW:
                 self._item_queue.append(item)
+                return True
             elif status not in self.BAD_STATUSES:
                 self._item_queue.appendleft(item)
+            return False
 
     def _change_status(self, item: Item, status: ItemStatus):
         self._items[item] = status

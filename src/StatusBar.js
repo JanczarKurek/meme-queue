@@ -49,7 +49,7 @@ class StatusBar extends React.Component {
     this.state = {
       events: [],
       cheeseStatus: null,
-      memeFileName: "raccoon.jpg"
+      memeFileName: null,
     };
   }
 
@@ -59,7 +59,7 @@ class StatusBar extends React.Component {
 
     for (let event of this.props.events)
       if (event.resource_tag === "meme")
-        this.setState({ memeFileName: event.url })
+        this.setState({ memeFileName: event.payload })
       else if (event.resource_tag === "cheeseStatus")
         this.setState({ cheeseStatus: event.status })
   }

@@ -15,7 +15,7 @@ class MainContent extends React.Component {
 
     for (let event of this.props.events)
       if (event.resource_tag === "meme")
-        this.setState({ imgUrl: event.url })
+        this.setState({ imgUrl: event.payload })
 
   }
 

@@ -13,6 +13,7 @@ async def execute_infrastructure(queue: ResourceQueue, providers: Iterable[Resou
     http_queue = HTTPQueueWrapper(queue, "pomidor")
     app = web.Application()
     http_queue.apply_to_app(app, output_only=True)
+    app.add_routes([web.static("/", "../build")])
 
     runner = web.AppRunner(app)
     await runner.setup()

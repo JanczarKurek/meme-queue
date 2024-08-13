@@ -34,7 +34,7 @@ class HTTPQueueWrapper:
 
     def apply_to_app(self, app: web.Application, output_only: bool):
         queue_app = web.Application()
-        queue_app.add_routes([web.get("/some_events", self.get_some_handler)])
+        queue_app.add_routes([web.get("/someEvents", self.get_some_handler)])
         if not output_only:
             queue_app.add_routes([web.put("/event", self.put_handler)])
         app.add_subapp(f"/{self._api_prefix}", queue_app)

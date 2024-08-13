@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+
+.App {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  font-family: 'Roboto Mono', Courier, monospace;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+
+.App-link {
+  color: #61dafb;
+}
+
+.NewsBar {
+  padding: 10px;
+}
+
+.MainContent {
+  background-color: #282c34;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  flex-grow: 1;
+}
+
+.MainContent img {
+  border-radius: 10px;
+}
+
+.StatusBar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: #282c34;
+  color: white;
+  border-top: 1px solid #61dafb;
+  display: flex;
+}
+
+.NewsBar {
+  background-color: #282c34;
+  color: white;
+  border-bottom: 1px solid #61dafb;
+}
+
+.StatusBarItem {
+  height: 50px;
+  padding: 10px 30px;
+  box-sizing: border-box;
+  border-right: 1px solid #61dafb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.StatusBar> :last-child {
+  border: none;
+}
+
+.spinner {
+  animation: spin 2s linear infinite;
+  height: 30px;
+  width: 30px;
+  border: 5px solid #555;
+  border-top: 5px solid #61dafb;
+  border-radius: 50%;
+
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(359deg);
+  }
+}

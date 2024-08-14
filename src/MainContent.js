@@ -5,7 +5,8 @@ class MainContent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      imgUrl: null,
+      contentUrl: null,
+      eventType: null,
     };
   }
 
@@ -14,16 +15,19 @@ class MainContent extends React.Component {
       return;
 
     for (let event of this.props.events)
-      if (event.resource_tag === "meme")
-        this.setState({ imgUrl: event.payload })
+      if (event.resource_tag === "meme" || event.resource_tag === "commercial" )
+        this.setState({ contentUrl: event.payload, eventType: event.resource_tag })
 
   }
 
   render() {
 
     let content = Spinner()
-    if (this.state.imgUrl !== null)
-      content = (<img src={this.state.imgUrl} alt={this.state.imgUrl} class="meme-image" />)
+    if (this.state.eventType === "meme")
+      content = (<img src={this.state.contentUrl} alt={this.state.contentUrl} class="meme-image" />)
+    else if (this.state.eventType === "commercial" ) {
+      content = (<video src={this.state.contentUrl} alt={this.state.contentUrl} class="commercial-video" />)
+    }
 
     return (
       <div className="MainContent">

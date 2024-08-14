@@ -1,16 +1,29 @@
 import asyncio as aio
+from collections.abc import Awaitable, AsyncGenerator
 import logging
+import inspect
 from pathlib import Path
 import time
-from typing import Callable
+from typing import Callable, TypeVar, Iterable
 
 from containers.cyclic_queue import CyclicQueue
 from resource.resource_queue import ResourceQueueBack
 from resource.resource_provider import TimeBasedResourceProvider
 
 base_logger = logging.getLogger(__name__)
-Filetype = Callable[[Path], bool]
+Filetype = Callable[[Path], bool | Awaitable[bool]]
 true = lambda p: True
+
+T = TypeVar("T")
+
+async def afilter(pred: Callable[[T], bool | Awaitable[bool]], it: Iterable[T]) -> AsyncGenerator[T]:
+    for e in it:
+        result = pred(e)
+        if inspect.isawaitable(result):
+            result = await result
+        else:
+            await aio.sleep(0)
+        yield result
 
 
 class FsResourceProvider(TimeBasedResourceProvider):
@@ -26,9 +39,8 @@ class FsResourceProvider(TimeBasedResourceProvider):
         self._logger = base_logger.getChild(f"FsResourceQueue({self._directory})")
 
     async def _worker(self):
-        #  TODO: add filtering based on filetype
         while True:
-            for file in filter(self._filetype, self._directory.iterdir()):
+            for file in afilter(self._filetype, self._directory.iterdir()):
                 if self._cyclic_queue.add_item(file):
                     self._logger.info(f"Adding {file}")
                 self._ready.set()

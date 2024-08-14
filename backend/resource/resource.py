@@ -10,6 +10,7 @@ class Resource:
     display_time: float  # When we want to display it.
     priority: int = 0  # More means more
     creation_time: float = dataclasses.field(default_factory=time.time)
+    decay_time: float | None = None # Time after which the resource gets deprecated and should no longer be displayed
 
     def to_json(self) -> dict[str, Any]:
         return dataclasses.asdict(self)

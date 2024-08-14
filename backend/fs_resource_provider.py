@@ -23,7 +23,8 @@ async def afilter(pred: Callable[[T], bool | Awaitable[bool]], it: Iterable[T]) 
             result = await result
         else:
             await aio.sleep(0)
-        yield result
+        if result:
+            yield e
 
 
 class FsResourceProvider(TimeBasedResourceProvider):
@@ -40,7 +41,7 @@ class FsResourceProvider(TimeBasedResourceProvider):
 
     async def _worker(self):
         while True:
-            for file in afilter(self._filetype, self._directory.iterdir()):
+            async for file in afilter(self._filetype, self._directory.iterdir()):
                 if self._cyclic_queue.add_item(file):
                     self._logger.info(f"Adding {file}")
                 self._ready.set()

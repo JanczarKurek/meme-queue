@@ -26,7 +26,7 @@ class MainContent extends React.Component {
     if (this.state.eventType === "meme")
       content = (<img src={this.state.contentUrl} alt={this.state.contentUrl} class="meme-image" />)
     else if (this.state.eventType === "commercial" ) {
-      content = (<video src={this.state.contentUrl} alt={this.state.contentUrl} class="commercial-video" />)
+      content = (<video src={this.state.contentUrl} alt={this.state.contentUrl} class="commercial-video" autoplay="autoplay" loop="true"/>)
     }
 
     return (

@@ -23,10 +23,14 @@ def is_image(path: pathlib.Path) -> bool:
         im.verify()
     except Exception:
         return False
+    return True
 
 
 async def is_video(path: pathlib.Path):
-    process = await asyncio.subprocess.create_subprocess_exec("ffprobe", ["-loglevel", "error", "-show_entries", "stream=codec_type", "-of default=nw=1"])
+    process = await asyncio.subprocess.create_subprocess_exec(
+        "ffprobe", "-loglevel", "error", "-show_entries", "stream=codec_type", "-of", "default=nw=1", path,
+        stdout=subprocess.PIPE, stderr=subprocess.DEVNULL
+    )
     result = await process.communicate()
     if process.returncode != 0:
         return False
@@ -72,8 +76,8 @@ if __name__ == "__main__":
     queue = SimpleResourceQueue(10)
     asyncio.run(execute_infrastructure(queue, 
         (
-            make_provider_http(queue, 10., "meme", "/mnt/nfs/memy.www", "http://internet.www/memy.www", filetype=is_image),
-            make_provider_http(queue, 60., "commercial", "/mnt/nfs/youtube.com", "http://internet.www/youtube.com", filetype=is_video),
+            # make_provider_http(queue, 10., "meme", "/mnt/nfs/memy.www", "http://internet.www/memy.www/", filetype=is_image),
+            make_provider_http(queue, 30., "commercial", "/mnt/nfs/youtube.com", "http://internet.www/youtube.com/", filetype=is_video),
             UrlResourceProvider(queue, 5., (
                 ("ser", "http://czyjestser.www/ser.txt"),
                 ("mleko", "http://czyjestmleko.www/mleko.txt"),

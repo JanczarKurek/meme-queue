@@ -19,10 +19,10 @@ class MainContent extends React.Component {
     if (prevProps.events === this.props.events || !this.props.events)
       return;
 
-    
-    this.setState({...this.state, events: this.props.events })
 
-    for (let event of this.props.events) 
+    this.setState({ ...this.state, events: this.props.events })
+
+    for (let event of this.props.events)
       if (event.resource_tag === "meme" || event.resource_tag === "commercial" || event.resource_tag === "display_status")
         this.setState({ ...this.state, contentUrl: event.payload, eventType: event.resource_tag, showingFoodStatus: event.resource_tag === "display_status" })
 
@@ -33,11 +33,10 @@ class MainContent extends React.Component {
     let content = Spinner()
     if (this.state.eventType === "meme")
       content = (<img src={this.state.contentUrl} alt={this.state.contentUrl} class="meme-image" />)
-    else if (this.state.eventType === "commercial" ) {
-      content = (<video src={this.state.contentUrl} alt={this.state.contentUrl} class="meme-image" autoplay="autoplay" loop="true"/>)
+    else if (this.state.eventType === "commercial") {
+      content = (<video src={this.state.contentUrl} alt={this.state.contentUrl} class="meme-image" autoplay="autoplay" loop="true" />)
     }
     else if (this.state.eventType === "display_status") {
-      console.log("Showing food chart!", this.state.showingFoodStatus);
       content = (<div></div>)
     }
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import {Bar} from 'react-chartjs-2'
+import { Bar } from 'react-chartjs-2'
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -77,27 +77,24 @@ class FoodBar extends React.Component {
             return;
 
 
-        let newState = this.state;
+        let newState = structuredClone(this.state)
         for (let event of this.props.events) {
             if (event.resource_tag === "status") {
-                console.log("Updating status of food");
                 for (let [food, status] of Object.entries(event.payload)) {
-                    console.log("Updating status of %s to %s", food, status);
-                    newState.data.datasets[this.value_to_pos[food]].data = [this.status_to_value[status]]
+                    newState.data.datasets[this.value_to_pos[food]].data = [this.status_to_value[food][status]]
                 }
                 this.setState(newState)
             }
         }
     }
-    
+
     render() {
-        console.log("Food is visible: " + this.props.visible)
         if (this.props.visible)
             return <Bar data={this.state.data} options={this.state.options} />;
         else
             return (<div></div>)
     }
-    
+
 }
 
 export default FoodBar;

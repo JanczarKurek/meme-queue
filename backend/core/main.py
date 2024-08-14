@@ -68,8 +68,17 @@ class UrlResourceProvider(TimeBasedResourceProvider):
                 payload[name] = None
         return {
             "payload": payload,
-            "display_time": time.time()
         }
+
+
+def make_periodic_event_provider(queue: ResourceQueueBack, interval: float, resource_tag: str):
+    class EmitEventResourceProvider(TimeBasedResourceProvider):
+        RESOURCE_TAG = resource_tag
+    
+        async def next_resource(self):
+            return {"payload": None}
+
+    return EmitEventResourceProvider(queue, interval)
 
 
 if __name__ == "__main__":
@@ -77,12 +86,13 @@ if __name__ == "__main__":
     asyncio.run(execute_infrastructure(queue, 
         (
             # make_provider_http(queue, 10., "meme", "/mnt/nfs/memy.www", "http://internet.www/memy.www/", filetype=is_image),
-            make_provider_http(queue, 30., "commercial", "/mnt/nfs/youtube.com", "http://internet.www/youtube.com/", filetype=is_video),
+            # make_provider_http(queue, 30., "commercial", "/mnt/nfs/youtube.com", "http://internet.www/youtube.com/", filetype=is_video),
             UrlResourceProvider(queue, 5., (
                 ("ser", "http://czyjestser.www/ser.txt"),
                 ("mleko", "http://czyjestmleko.www/mleko.txt"),
                 ("chleb", "http://czyjestchlebtostowy.www/chleb.txt"),
-            ))
+            )),
+            make_periodic_event_provider(queue, 10., "display_status"),
         )
     ))
     print(queue._content)

@@ -61,7 +61,6 @@ class StatusBar extends React.Component {
       if (event.resource_tag === "meme" || event.resource_tag === "commercial" )
         this.setState({ memeFileName: event.payload })
       else if (event.resource_tag === "status") {
-        console.log(event.payload.cheese)
         this.setState({ cheeseStatus: "🧀: " + event.payload.ser })
       }
   }

@@ -1,5 +1,7 @@
 import React from 'react';
 import Spinner from "./Spinner"
+import FoodStatus from "./FoodStatus"
+
 class MainContent extends React.Component {
 
   constructor(props) {
@@ -7,16 +9,22 @@ class MainContent extends React.Component {
     this.state = {
       contentUrl: null,
       eventType: null,
+      showingFoodStatus: false,
+      events: []
     };
+    this.foodStatus = (<FoodStatus events={this.state.events} visible={this.state.showingFoodStatus}></FoodStatus>);
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.events === this.props.events || !this.props.events)
       return;
 
-    for (let event of this.props.events)
-      if (event.resource_tag === "meme" || event.resource_tag === "commercial" )
-        this.setState({ contentUrl: event.payload, eventType: event.resource_tag })
+    
+    this.setState({...this.state, events: this.props.events })
+
+    for (let event of this.props.events) 
+      if (event.resource_tag === "meme" || event.resource_tag === "commercial" || event.resource_tag === "display_status")
+        this.setState({ ...this.state, contentUrl: event.payload, eventType: event.resource_tag, showingFoodStatus: event.resource_tag === "display_status" })
 
   }
 
@@ -26,11 +34,16 @@ class MainContent extends React.Component {
     if (this.state.eventType === "meme")
       content = (<img src={this.state.contentUrl} alt={this.state.contentUrl} class="meme-image" />)
     else if (this.state.eventType === "commercial" ) {
-      content = (<video src={this.state.contentUrl} alt={this.state.contentUrl} class="commercial-video" autoplay="autoplay" loop="true"/>)
+      content = (<video src={this.state.contentUrl} alt={this.state.contentUrl} class="meme-image" autoplay="autoplay" loop="true"/>)
+    }
+    else if (this.state.eventType === "display_status") {
+      console.log("Showing food chart!", this.state.showingFoodStatus);
+      content = (<div></div>)
     }
 
     return (
       <div className="MainContent">
+        <FoodStatus events={this.state.events} visible={this.state.showingFoodStatus}></FoodStatus>
         {content}
       </div>
     )

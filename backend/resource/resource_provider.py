@@ -24,8 +24,9 @@ class ResourceProvider(abc.ABC):
 class TimeBasedResourceProvider(ResourceProvider):
     """Resource provider that puts a resource in a regular manner"""
 
-    def __init__(self, queue: ResourceQueueBack, interval: float):
+    def __init__(self, queue: ResourceQueueBack, interval: float, startup_delay: float = 0.):
         self._interval = interval
+        self._startup_delay = startup_delay
         super().__init__(queue)
     
     async def setup(self):
@@ -39,11 +40,11 @@ class TimeBasedResourceProvider(ResourceProvider):
         pass
 
     async def run(self):
-        await self.setup()
+        await asyncio.gather(self.setup(), asyncio.sleep(self._startup_delay))
         while True:
-            await asyncio.sleep(self._interval)
             if next_resource:=await self.next_resource():
                 await self.put_resource(**next_resource)
             else:
                 await self.teardown()
                 return
+            await asyncio.sleep(self._interval)

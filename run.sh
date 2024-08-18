@@ -2,10 +2,13 @@
 
 set -eo pipefail
 
-npm run build
 if [ -z $VIRTUAL_ENV ]; then
   source venv/bin/activate
 fi
-cd backend/
+
+cd frontend/
+npm run build
+
+cd ../backend/
 python -m core.main
 

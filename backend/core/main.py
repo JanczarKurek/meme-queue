@@ -100,7 +100,7 @@ if __name__ == "__main__":
     queue = SimpleResourceQueue(10)
     asyncio.run(execute_infrastructure(queue, 
         (
-            # make_provider_http(queue, 10., "meme", "/mnt/nfs/memy.www", "http://internet.www/memy.www/", filetype=is_image),
+            make_provider_http(queue, 10., "meme", "/home/janczarknurek/not_work/www/memy/", "http://localhost:2222/", filetype=is_image),
             # make_provider_http(queue, 30., "commercial", "/mnt/nfs/youtube.com", "http://internet.www/youtube.com/", filetype=is_video),
             # UrlResourceProvider(queue, 5., (
             #     ("ser", "http://czyjestser.www/ser.txt"),
@@ -108,6 +108,6 @@ if __name__ == "__main__":
             make_provider_from_iterable(queue, 5., "status", itertools.cycle(
                 ({"ser": s} for s in ("Otóż TAK!!!", "Już prawie nie ma, @Piotr kup ser", "SER SIĘ SKOŃCZYŁ!!!!!!!!!!!!1111111jedenjeden"))
             )),
-            make_periodic_event_provider(queue, 30., "display_status"),
+            make_periodic_event_provider(queue, 31.11, "display_status"),
         )
     ))

@@ -1,6 +1,7 @@
 import React from 'react';
 import Spinner from "./Spinner"
 import FoodStatus from "./FoodStatus"
+import Queue from 'queue-fifo';
 
 class MainContent extends React.Component {
 
@@ -12,7 +13,20 @@ class MainContent extends React.Component {
       showingFoodStatus: false,
       events: []
     };
+    this.event_queue = new Queue;
     this.foodStatus = (<FoodStatus events={this.state.events} visible={this.state.showingFoodStatus}></FoodStatus>);
+  }
+
+  get_next_event() {
+    while (!this.event_queue.isEmpty()) {
+      const event = this.event_queue.dequeue();
+      if (event.decay_time === null) // Event is always fresh
+        return event;
+      if (event.display_time + event.decay_time < Math.floor(Date.now() / 1000)) {
+        return event;
+      }
+    }
+    return null;
   }
 
   componentDidUpdate(prevProps) {
@@ -28,6 +42,15 @@ class MainContent extends React.Component {
 
   }
 
+  // setNextEvent() {
+  //   const event = this.get_next_event();
+  //   if (event === null) {
+  //     setTimeout(() => this.setNextEvent(), 1000);
+  //     return
+  //   }
+  //   this.setState(...this.state, event.resource_tag = 
+  // }
+
   render() {
 
     let content = Spinner()
@@ -39,7 +62,7 @@ class MainContent extends React.Component {
     else if (this.state.eventType === "display_status") {
       content = (<div></div>)
     }
-
+    setTimeout(() => this.setNextEvent(), 10000); // Put here time dependent on the resource...
     return (
       <div className="MainContent">
         <FoodStatus events={this.state.events} visible={this.state.showingFoodStatus}></FoodStatus>

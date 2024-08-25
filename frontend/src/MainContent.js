@@ -12,7 +12,11 @@ class MainContent extends React.Component {
       showingFoodStatus: false,
       events: []
     };
-    this.foodStatus = (<FoodStatus events={this.state.events} visible={this.state.showingFoodStatus}></FoodStatus>);
+    this.dupaCounter = 1;
+  }
+
+  componentDidMount() {
+    setInterval(() => this.props.setCurrentMeme(this.dupaCounter++), 1000)
   }
 
   componentDidUpdate(prevProps) {

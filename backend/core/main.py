@@ -2,6 +2,7 @@ import asyncio
 import time
 import aiohttp
 import logging
+import itertools
 import typing
 import pathlib
 import urllib.parse 
@@ -11,7 +12,7 @@ from resource.resource_queue import ResourceQueueBack
 
 from monolith.infrastructure import execute_infrastructure
 from resource.resource_queue import SimpleResourceQueue
-from fs_resource_provider import FsResourceProvider
+from resource.providers.fs import FsResourceProvider
 from resource.resource_provider import TimeBasedResourceProvider
 
 logging.basicConfig(level=logging.INFO)
@@ -81,18 +82,32 @@ def make_periodic_event_provider(queue: ResourceQueueBack, interval: float, reso
     return EmitEventResourceProvider(queue, interval)
 
 
+def make_provider_from_iterable(queue: ResourceQueueBack, interval: float, resource_tag: str, results: typing.Iterable):
+    """Useful for testing in place of an actual infrastructure"""
+    class ProviderFromIterable(TimeBasedResourceProvider):
+        RESOURCE_TAG = resource_tag
+
+        async def next_resource(self):
+            try:
+                return {"payload": next(results)}
+            except StopIteration:
+                return None
+    
+    return ProviderFromIterable(queue, interval)
+
+
 if __name__ == "__main__":
     queue = SimpleResourceQueue(10)
     asyncio.run(execute_infrastructure(queue, 
         (
-            # make_provider_http(queue, 10., "meme", "/mnt/nfs/memy.www", "http://internet.www/memy.www/", filetype=is_image),
+            make_provider_http(queue, 10., "meme", "/home/janczarknurek/not_work/www/memy/", "http://localhost:2222/", filetype=is_image),
             # make_provider_http(queue, 30., "commercial", "/mnt/nfs/youtube.com", "http://internet.www/youtube.com/", filetype=is_video),
-            UrlResourceProvider(queue, 5., (
-                ("ser", "http://czyjestser.www/ser.txt"),
-                ("mleko", "http://czyjestmleko.www/mleko.txt"),
-                ("chleb", "http://czyjestchlebtostowy.www/chleb.txt"),
+            # UrlResourceProvider(queue, 5., (
+            #     ("ser", "http://czyjestser.www/ser.txt"),
+            # )),
+            make_provider_from_iterable(queue, 5., "status", itertools.cycle(
+                ({"ser": s} for s in ("Otóż TAK!!!", "Już prawie nie ma, @Piotr kup ser", "SER SIĘ SKOŃCZYŁ!!!!!!!!!!!!1111111jedenjeden"))
             )),
-            make_periodic_event_provider(queue, 10., "display_status"),
+            make_periodic_event_provider(queue, 31.11, "display_status"),
         )
     ))
-    print(queue._content)

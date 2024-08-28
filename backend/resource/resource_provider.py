@@ -35,10 +35,6 @@ class TimeBasedResourceProvider(ResourceProvider):
     async def teardown(self):
         pass
 
-    @abc.abstractmethod
-    async def next_resource(self) -> dict | None:
-        pass
-
     async def run(self):
         await asyncio.gather(self.setup(), asyncio.sleep(self._startup_delay))
         while True:

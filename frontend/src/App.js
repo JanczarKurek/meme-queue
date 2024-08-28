@@ -10,17 +10,21 @@ class App extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {}
+    this.state = {currentMeme: null}
+    this.statusBarRef = React.createRef();
   }
 
   render() {
-    const statusBar = (<StatusBar events={this.state.events} />);
-    const setCurrentMeme = (meme) => {statusBar.setState({memeFileName: meme})}
+    const setCurrentMeme = (meme) => {
+      if (this.statusBarRef.current) {
+        this.statusBarRef.current.setState({currentMeme: meme});
+      }
+    }
     return (
       <div className="App">
         <NewsBar events={this.state.events} />
         <MainContent events={this.state.events} setCurrentMeme={setCurrentMeme} />
-        {statusBar}
+        <StatusBar events={this.state.events} currentMeme={this.state.currentMeme} ref={this.statusBarRef}/>
       </div>
     );
   }

@@ -21,7 +21,7 @@ class MainContent extends React.Component {
       const event = this.eventQueue.dequeue();
       if (event.decay_time === null) // Event is always fresh.
         return event;
-      if (event.display_time + event.decay_time < Math.floor(Date.now() / 1000)) {
+      if (event.display_time + event.decay_time < (Date.now() / 1000)) {
         return event;
       }
     }

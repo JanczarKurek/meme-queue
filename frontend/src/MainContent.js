@@ -11,7 +11,7 @@ class MainContent extends React.Component {
       contentUrl: null,
       eventType: null,
       showingFoodStatus: false,
-      events: []
+      foodInfo: []
     };
     this.eventQueue = new Queue;
   }
@@ -39,7 +39,7 @@ class MainContent extends React.Component {
         if (event.resource_tag === "meme" || event.resource_tag === "commercial") {
           this.props.setCurrentMeme(event.payload);
         }
-        this.setState({ ...this.state, contentUrl: event.payload, eventType: event.resource_tag, showingFoodStatus: event.resource_tag === "display_status" })
+        this.setState({ contentUrl: event.payload, eventType: event.resource_tag, showingFoodStatus: event.resource_tag === "display_status" })
         setTimeout(() => this.setNextState(), event.minimal_display_time);
       }
     } catch (error) {
@@ -59,6 +59,8 @@ class MainContent extends React.Component {
       if (event.resource_tag === "meme" || event.resource_tag === "commercial" || event.resource_tag === "display_status") {
         console.log("Adding new event to the queue", event);
         this.eventQueue.enqueue(event);
+      } else if (event.resource_tag === "status") {
+        this.setState({foodInfo: [event]});
       }
   }
 
@@ -76,7 +78,7 @@ class MainContent extends React.Component {
 
     return (
       <div className="MainContent">
-        <FoodStatus events={this.state.events} visible={this.state.showingFoodStatus}></FoodStatus>
+        <FoodStatus events={this.state.foodInfo} visible={this.state.showingFoodStatus}></FoodStatus>
         {content}
       </div>
     )

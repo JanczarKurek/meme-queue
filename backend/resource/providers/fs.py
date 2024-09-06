@@ -7,7 +7,6 @@ import time
 from typing import Callable, TypeVar, Iterable
 
 from containers.cyclic_queue import CyclicQueue
-from resource.resource_queue import ResourceQueueBack
 from resource.resource_provider import TimeBasedResourceProvider
 
 base_logger = logging.getLogger(__name__)
@@ -30,8 +29,8 @@ async def afilter(pred: Callable[[T], bool | Awaitable[bool]], it: Iterable[T]) 
 class FsResourceProvider(TimeBasedResourceProvider):
     """Serves data from a given folder cycling through it"""
 
-    def __init__(self, queue: ResourceQueueBack, interval: float, directory: str, filetype: Filetype = true):
-        super().__init__(queue, interval)
+    def __init__(self, *, directory: str, filetype: Filetype = true, **kwargs):
+        super().__init__(**kwargs)
         self._directory = Path(directory)
         self._cyclic_queue: CyclicQueue[Path] = CyclicQueue()
         self._watcher_job: aio.Task | None = None
@@ -54,12 +53,15 @@ class FsResourceProvider(TimeBasedResourceProvider):
         assert isinstance(self._watcher_job, aio.Task)
         self._watcher_job.cancel()
 
+    def path_to_payload(self, path: Path):
+        return str(path)
+
     async def next_resource(self) -> dict | None:
         await self._ready.wait()
         next_media = self._cyclic_queue.next_media()
         if not next_media:
             return None
         return {
-            "payload": str(next_media),
+            "payload": self.path_to_payload(next_media),
             "display_time": time.time(),
         }

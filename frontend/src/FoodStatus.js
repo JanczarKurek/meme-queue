@@ -73,6 +73,7 @@ class FoodBar extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
+        console.log("Maybe we need to change something?", this.props.events)
         if (prevProps.events === this.props.events || !this.props.events)
             return;
 

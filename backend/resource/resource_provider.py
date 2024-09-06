@@ -1,5 +1,6 @@
 import abc
 import asyncio
+import typing
 
 from resource.resource import Resource
 from resource.resource_queue import ResourceQueueBack
@@ -8,13 +9,20 @@ from resource.resource_queue import ResourceQueueBack
 class ResourceProvider(abc.ABC):
     """Basic resource provider"""
 
-    RESOURCE_TAG: str = "None"
+    def default_tag(self) -> str:
+        return "None"
+    
+    def defaults(self) -> typing.Mapping[str, typing.Any]:
+        """Rest of defaults"""
+        return {}
 
     def __init__(self, queue: ResourceQueueBack):
         self._queue = queue
 
     async def put_resource(self, **kwargs):
-        await self._queue.put(Resource(**kwargs, resource_tag=self.RESOURCE_TAG))
+        await self._queue.put(Resource(
+            **{**self.defaults(), "resource_tag": self.default_tag(), **kwargs}
+        ))
     
     @abc.abstractmethod
     async def run(self):
@@ -33,10 +41,6 @@ class TimeBasedResourceProvider(ResourceProvider):
         pass
 
     async def teardown(self):
-        pass
-
-    @abc.abstractmethod
-    async def next_resource(self) -> dict | None:
         pass
 
     async def run(self):

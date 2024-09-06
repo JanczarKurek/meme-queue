@@ -1,18 +1,16 @@
 import asyncio
-import time
-import aiohttp
 import logging
-import typing
-import pathlib
-import urllib.parse 
+import itertools
+import pathlib 
 from PIL import Image
 import subprocess
-from resource.resource_queue import ResourceQueueBack
 
 from monolith.infrastructure import execute_infrastructure
 from resource.resource_queue import SimpleResourceQueue
-from fs_resource_provider import FsResourceProvider
-from resource.resource_provider import TimeBasedResourceProvider
+from resource.providers.from_iterable import ProviderFromIterable
+from resource.providers.fs_via_http import FsViaHttpProvider
+from resource.providers.mixins import defaults_mixin
+from resource.providers.periodic import PeriodicEventResourceProvider
 
 logging.basicConfig(level=logging.INFO)
 
@@ -35,64 +33,31 @@ async def is_video(path: pathlib.Path):
     if process.returncode != 0:
         return False
     return "codec_type=video\n" in result[0].decode()
-        
 
 
-def make_provider_http(queue: ResourceQueueBack, interval: float, resource_tag: str, fs_path: str, url_prefix: str, **kwargs):
-    class FsViaHttpProvider(FsResourceProvider):
-        RESOURCE_TAG = resource_tag
+class MemeProvider(
+    FsViaHttpProvider,
+    defaults_mixin(default_tag="meme", defaults={"minimal_display_time": 5000.})):
+    pass
 
-        async def next_resource(self):
-            result = await super().next_resource()
-            result["payload"] = urllib.parse.urljoin(url_prefix, pathlib.Path(result["payload"]).name)
-            return result
-    
-    return FsViaHttpProvider(queue, interval, fs_path, **kwargs)
-
-class UrlResourceProvider(TimeBasedResourceProvider):
-    """Queries a number of URLs"""
-    RESOURCE_TAG = "status"
-
-    def __init__(self, queue: ResourceQueueBack, interval: float, urls: typing.Iterable[tuple[str, str]]):
-        self._urls = tuple(urls)
-        super().__init__(queue, interval)
-
-    async def next_resource(self):
-        payload = {}
-        for name, url in self._urls:
-            try:
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(url) as resp:
-                        payload[name] = await resp.text()
-            except Exception:
-                payload[name] = None
-        return {
-            "payload": payload,
-        }
-
-
-def make_periodic_event_provider(queue: ResourceQueueBack, interval: float, resource_tag: str):
-    class EmitEventResourceProvider(TimeBasedResourceProvider):
-        RESOURCE_TAG = resource_tag
-    
-        async def next_resource(self):
-            return {"payload": None}
-
-    return EmitEventResourceProvider(queue, interval)
-
+class DisplayFoodStatusEventProvider(
+    PeriodicEventResourceProvider,
+    defaults_mixin(default_tag="display_status", defaults={"minimal_display_time": 30000.})
+):
+    pass
 
 if __name__ == "__main__":
     queue = SimpleResourceQueue(10)
     asyncio.run(execute_infrastructure(queue, 
         (
-            # make_provider_http(queue, 10., "meme", "/mnt/nfs/memy.www", "http://internet.www/memy.www/", filetype=is_image),
+            MemeProvider(queue=queue, interval=10., filetype=is_image, directory="/home/janczarknurek/not_work/www/memy/", url_prefix="http://localhost:2222/"),
             # make_provider_http(queue, 30., "commercial", "/mnt/nfs/youtube.com", "http://internet.www/youtube.com/", filetype=is_video),
-            UrlResourceProvider(queue, 5., (
-                ("ser", "http://czyjestser.www/ser.txt"),
-                ("mleko", "http://czyjestmleko.www/mleko.txt"),
-                ("chleb", "http://czyjestchlebtostowy.www/chleb.txt"),
+            # UrlResourceProvider(queue, 5., (
+            #     ("ser", "http://czyjestser.www/ser.txt"),
+            # )),
+            ProviderFromIterable(queue=queue, interval=5., event_tag="status", events=itertools.cycle(
+                ({"ser": s} for s in ("Otóż TAK!!!", "Już prawie nie ma, @Piotr kup ser", "SER SIĘ SKOŃCZYŁ!!!!!!!!!!!!1111111jedenjeden"))
             )),
-            make_periodic_event_provider(queue, 10., "display_status"),
+            DisplayFoodStatusEventProvider(queue=queue, interval=31.11),
         )
     ))
-    print(queue._content)

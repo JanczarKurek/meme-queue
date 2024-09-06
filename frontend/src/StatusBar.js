@@ -49,7 +49,7 @@ class StatusBar extends React.Component {
     this.state = {
       events: [],
       cheeseStatus: null,
-      memeFileName: null,
+      currentMeme: null,
     };
   }
 
@@ -70,7 +70,7 @@ class StatusBar extends React.Component {
       <div className="StatusBar">
         <StatusBarItem text="internet.www" />
         <StatusBarItem text={this.state.cheeseStatus} />
-        <StatusBarItem text={this.state.memeFileName} grow={true} />
+        <StatusBarItem text={this.state.currentMeme} grow={true} />
         <StatusBarItem> <Clock /> </StatusBarItem>
 
       </div>

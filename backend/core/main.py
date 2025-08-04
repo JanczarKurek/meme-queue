@@ -5,6 +5,8 @@ import pathlib
 from PIL import Image
 import subprocess
 
+import aiohttp.web as web
+
 from monolith.infrastructure import execute_infrastructure
 from resource.resource_queue import SimpleResourceQueue
 from resource.providers.from_iterable import ProviderFromIterable
@@ -38,13 +40,44 @@ async def is_video(path: pathlib.Path):
 class MemeProvider(
     FsViaHttpProvider,
     defaults_mixin(default_tag="meme", defaults={"minimal_display_time": 5000.})):
-    pass
+    
+    async def ban_resource(self, meme_path: str):
+        self._cyclic_queue.block_media(pathlib.Path(meme_path))
+
 
 class DisplayFoodStatusEventProvider(
     PeriodicEventResourceProvider,
     defaults_mixin(default_tag="display_status", defaults={"minimal_display_time": 30000.})
 ):
     pass
+
+
+class UserFrontend:
+    def __init__(self, meme_provider, commercial_provider) -> None:
+        self._meme_provider = meme_provider
+        self._commercial_provider = commercial_provider
+    
+    def _list_recent_memes(self, request: web.Request):
+        pass
+
+    def _report_meme(self, request: web.Request):
+        pass
+
+    def _kill_commercial(self, request: web.Request):
+        pass
+
+    def _show_commercial(self, request: web.Request):
+        pass
+    
+    def apply_to_app(self, app: web.Application):
+        app.add_routes([
+            web.get('/', self._list_recent_memes),
+            web.post('/report/{meme_name}', self._report_meme),
+            # web.get(f"/media/{{meme}}", self.serve_meme),
+            web.post('/kill_commercial', self._kill_commercial),
+            web.post('/ask_commercial', self._show_commercial),
+        ])
+
 
 if __name__ == "__main__":
     queue = SimpleResourceQueue(10)
